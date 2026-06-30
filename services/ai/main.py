@@ -23,7 +23,7 @@ def main() -> None:
     system_prompt = "/no_think\n\n" + persona if config.chat.no_think else persona
 
     llm = LlamaCppLLM(config.model, config.sampling)
-    chat_service = ChatService(llm, system_prompt=system_prompt)
+    chat_service = ChatService(llm, system_prompt=system_prompt, max_tokens=config.chat.max_tokens)
     CLI(chat_service).run()
 
 

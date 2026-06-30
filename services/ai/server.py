@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     persona = config.chat.persona_path.read_text(encoding="utf-8").strip()
     app.state.system_prompt = "/no_think\n\n" + persona if config.chat.no_think else persona
+    app.state.default_max_tokens = config.chat.max_tokens
     app.state.llm = LlamaCppLLM(config.model, config.sampling)
 
     yield

@@ -14,17 +14,19 @@ class ChatService:
     can reference earlier messages.
     """
 
-    def __init__(self, llm: LLM, system_prompt: str) -> None:
+    def __init__(self, llm: LLM, system_prompt: str, max_tokens: int = 512) -> None:
         """
         Args:
             llm: Any object that satisfies the LLM Protocol (e.g. LlamaCppLLM).
             system_prompt: Persona/instruction text sent as the system message on every request.
+            max_tokens: Maximum tokens the model may generate per reply. Defaults to 512.
         """
         self._llm = llm
         self._system_prompt = system_prompt
+        self._max_tokens = max_tokens
         self._history = ConversationHistory()
 
-    def chat(self, user_input: str, max_tokens: int = 512) -> str:
+    def chat(self, user_input: str) -> str:
         """
         Process one user turn and return the model's reply.
 
@@ -33,7 +35,6 @@ class ChatService:
 
         Args:
             user_input: Text typed by the user.
-            max_tokens: Maximum tokens the model may generate. Defaults to 512.
 
         Returns:
             str: The model's reply.
@@ -45,7 +46,7 @@ class ChatService:
             *self._history.messages(),
         ]
 
-        result = self._llm.chat(messages, max_tokens=max_tokens)
+        result = self._llm.chat(messages, max_tokens=self._max_tokens)
         self._history.add("assistant", result.reply)
         return result.reply
 

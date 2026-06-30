@@ -72,7 +72,7 @@ class ChatConfig:
         no_think: Prepend /no_think to the system prompt to disable Qwen3 thinking mode.
     """
 
-    max_tokens: int = 512
+    max_tokens: int = 2048
     persona_path: Path = field(
         default_factory=lambda: BASE_DIR / "data" / "personas" / "makise_kurisu.md"
     )
@@ -82,12 +82,17 @@ class ChatConfig:
 @dataclass
 class AppConfig:
     """
-    Top-level application configuration that groups all sub-configs.
+    Top-level config loaded once at startup. Always access settings through sub-configs:
+
+        config = load_config()
+        config.model.n_ctx           # LLM loading and runtime parameters
+        config.sampling.temperature  # token sampling parameters
+        config.chat.no_think         # chat behavior settings
 
     Attributes:
-        model: Settings for the LLM model (path, GPU layers, context size, etc.).
-        sampling: Sampling parameters for token generation (temperature, top_p, etc.).
-        chat: Settings for chat behavior (max tokens, persona file path, no_think).
+        model: LLM loading and runtime parameters.
+        sampling: Token sampling parameters (temperature, top_p, etc.).
+        chat: Chat behavior settings (persona path, max_tokens, no_think).
     """
 
     model: ModelConfig

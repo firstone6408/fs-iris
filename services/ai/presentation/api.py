@@ -27,11 +27,11 @@ class ChatRequest(BaseModel):
     Attributes:
         messages: Ordered list of user/assistant turns (no system message — the
                   server prepends the configured persona automatically).
-        max_tokens: Maximum tokens the model may generate. Defaults to 512.
+        max_tokens: Maximum tokens the model may generate. Uses server default from config if omitted.
     """
 
     messages: list[MessageModel]
-    max_tokens: int = 512
+    max_tokens: int | None = None
 
 
 class ChatResponse(BaseModel):
@@ -80,7 +80,8 @@ def chat(body: ChatRequest, request: Request) -> ChatResponse:
         *[Message(role=m.role, content=m.content) for m in body.messages],
     ]
 
-    result = llm.chat(messages, max_tokens=body.max_tokens)
+    max_tokens: int = body.max_tokens if body.max_tokens is not None else request.app.state.default_max_tokens
+    result = llm.chat(messages, max_tokens=max_tokens)
     return ChatResponse(
         reply=result.reply,
         finish_reason=result.finish_reason,
