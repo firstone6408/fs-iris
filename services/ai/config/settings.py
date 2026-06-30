@@ -30,11 +30,35 @@ class ModelConfig:
     n_gpu_layers: int = -1
     flash_attn: bool = True
     n_threads: int = field(default_factory=lambda: os.cpu_count() or 4)
-    n_batch: int = 1024
-    n_ubatch: int = 512
+    n_batch: int = 4096
+    n_ubatch: int = 2048
     use_mmap: bool = True
     use_mlock: bool = True
     verbose: bool = False
+
+
+@dataclass
+class SamplingConfig:
+    """
+    Sampling parameters that control how the model generates tokens.
+
+    Attributes:
+        temperature: Randomness of output. Higher = more creative, lower = more focused.
+        top_p: Nucleus sampling threshold. Keeps tokens whose cumulative probability >= top_p.
+        top_k: Limits token selection to the top-k most likely tokens at each step.
+        min_p: Minimum probability threshold relative to the top token (0.0 = disabled).
+        presence_penalty: Penalizes tokens that have already appeared, reducing repetition.
+        seed: Random seed for reproducibility. -1 = random seed each run.
+        stop: List of strings that cause the model to stop generating when encountered.
+    """
+
+    temperature: float = 0.7
+    top_p: float = 0.8
+    top_k: int = 20
+    min_p: float = 0.0
+    presence_penalty: float = 1.5
+    seed: int = -1
+    stop: list[str] = field(default_factory=lambda: [])
 
 
 @dataclass
@@ -45,12 +69,14 @@ class ChatConfig:
     Attributes:
         max_tokens: Maximum number of tokens the model can generate per reply.
         persona_path: Path to the persona text file used as the system prompt.
+        no_think: Prepend /no_think to the system prompt to disable Qwen3 thinking mode.
     """
 
     max_tokens: int = 512
     persona_path: Path = field(
         default_factory=lambda: BASE_DIR / "data" / "personas" / "makise_kurisu.md"
     )
+    no_think: bool = True
 
 
 @dataclass
@@ -60,10 +86,12 @@ class AppConfig:
 
     Attributes:
         model: Settings for the LLM model (path, GPU layers, context size, etc.).
-        chat: Settings for chat behavior (max tokens, persona file path).
+        sampling: Sampling parameters for token generation (temperature, top_p, etc.).
+        chat: Settings for chat behavior (max tokens, persona file path, no_think).
     """
 
     model: ModelConfig
+    sampling: SamplingConfig
     chat: ChatConfig
 
 
@@ -75,11 +103,12 @@ def load_config() -> AppConfig:
     can be launched from any working directory.
 
     Returns:
-        AppConfig: Ready-to-use configuration with model and chat settings.
+        AppConfig: Ready-to-use configuration with model, sampling, and chat settings.
     """
     return AppConfig(
         model=ModelConfig(
             path=BASE_DIR / "models" / "qwen3-8b-q4_k_m.gguf",
         ),
+        sampling=SamplingConfig(),
         chat=ChatConfig(),
     )

@@ -1,6 +1,7 @@
 """LLM abstraction — depend on this Protocol, not on any specific library."""
 
 from typing import Protocol
+from core.chat_result import ChatResult
 from core.message import Message
 
 
@@ -14,9 +15,9 @@ class LLM(Protocol):
     no other code needs to change.
     """
 
-    def chat(self, messages: list[Message], max_tokens: int = 512) -> str:
+    def chat(self, messages: list[Message], max_tokens: int = 512) -> ChatResult:
         """
-        Send a list of messages to the model and return its text reply.
+        Send a list of messages to the model and return a structured result.
 
         Args:
             messages: The full conversation context, including the system prompt
@@ -24,6 +25,6 @@ class LLM(Protocol):
             max_tokens: Maximum number of tokens the model may generate in its reply.
 
         Returns:
-            str: The model's generated reply as a plain string.
+            ChatResult: Reply text plus token usage and finish reason for debugging.
         """
         ...

@@ -45,9 +45,9 @@ class ChatService:
             *self._history.messages(),
         ]
 
-        reply = self._llm.chat(messages, max_tokens=max_tokens)
-        self._history.add("assistant", reply)
-        return reply
+        result = self._llm.chat(messages, max_tokens=max_tokens)
+        self._history.add("assistant", result.reply)
+        return result.reply
 
     def clear_history(self) -> None:
         """Reset conversation history while keeping the system prompt intact."""
