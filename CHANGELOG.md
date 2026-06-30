@@ -26,12 +26,14 @@ All notable changes to FS-Iris will be documented here.
   - `presentation/` — CLI, FastAPI router
 - `ConversationHistory` — multi-turn conversation context (each turn now remembers prior messages)
 - Makise Kurisu persona (`services/ai/data/personas/makise_kurisu.md`)
+- `services/ai/README.md` — architecture documentation
 
 #### HTTP API
 
 - `POST /chat` — send message history, receive model reply
 - `GET /health` — liveness check
 - LLM loaded once at startup via FastAPI `lifespan`
+- `max_tokens` per request — falls back to `config.chat.max_tokens` if omitted
 - Auto-generated Swagger UI at `/docs`
 
 #### Inference
@@ -40,6 +42,14 @@ All notable changes to FS-Iris will be documented here.
 - `SamplingConfig` — `temperature`, `top_p`, `top_k`, `min_p`, `presence_penalty`, `seed`, `stop`
 - `no_think` — suppresses Qwen3 chain-of-thought output via `/no_think` prefix; `<think>` blocks stripped automatically
 - `AppConfig` — single load with namespaced sub-configs (`config.model`, `config.sampling`, `config.chat`)
+- `max_tokens` from `config.chat.max_tokens` is passed through entry points (`cli.py`, `server.py`) into `ChatService` — no longer relies on function signature defaults
+
+---
+
+### Changed
+
+- `main.py` renamed to `cli.py` to match `server.py` naming convention
+- `requirements.txt` includes `llama-cpp-python` alongside `fastapi` and `uvicorn`
 
 ---
 

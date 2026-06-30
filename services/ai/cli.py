@@ -1,4 +1,4 @@
-"""Entry point — wires config, LLM, service, and CLI together then starts the app."""
+"""CLI entry point — wires config, LLM, service, and CLI together then starts the app."""
 
 from config.settings import load_config
 from infrastructure.llama_cpp_llm import LlamaCppLLM
