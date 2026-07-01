@@ -45,6 +45,9 @@ def synthesize(body: SynthesizeRequest, request: Request) -> Response:
     from application.tts_service import TTSService
     from core.voice_ref import VoiceRef
 
+    if not body.text.strip():
+        raise HTTPException(status_code=400, detail="text cannot be empty")
+
     service: TTSService = request.app.state.service
     voices: dict[str, VoiceRef] = request.app.state.voices
 

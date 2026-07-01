@@ -3,7 +3,6 @@
 import re
 
 import numpy as np
-from pythainlp.tokenize import sent_tokenize
 from f5_tts_th.tts import TTS as _F5TTS
 from f5_tts_th.utils_infer import preprocess_ref_audio_text, infer_process
 
