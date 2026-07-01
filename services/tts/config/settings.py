@@ -46,15 +46,17 @@ class TTSConfig:
         sample_rate: Output audio sample rate in Hz. F5-TTS outputs 24000 Hz.
         default_voice: Key from load_voices() to use when no voice is specified.
                        Falls back to first available voice if key is not found.
+        sentence_silence: Seconds of silence inserted between sentences.
     """
 
     model: str = "v2"
-    step: int = 36
+    step: int = 28
     cfg: float = 2.0
     speed: float = 1.2
-    max_chars: int = 100
+    max_chars: int = 150
     sample_rate: int = 24000
     default_voice: str = ""
+    sentence_silence: float = 0.3
 
 
 @dataclass
