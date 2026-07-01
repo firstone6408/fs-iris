@@ -1,0 +1,15 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+scripts/
+outputs/
+
+# Voice samples — keep locally, never commit copyrighted audio or transcriptions
+data/sounds/*
+!data/sounds/.gitkeep
