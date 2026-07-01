@@ -48,10 +48,10 @@ class TTSConfig:
                        Falls back to first available voice if key is not found.
     """
 
-    model: str = "v1"
-    step: int = 24
+    model: str = "v2"
+    step: int = 36
     cfg: float = 2.0
-    speed: float = 1.0
+    speed: float = 1.2
     max_chars: int = 100
     sample_rate: int = 24000
     default_voice: str = ""

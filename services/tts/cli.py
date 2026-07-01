@@ -1,6 +1,6 @@
 """CLI entry point — wires config, voice, engine, service, and CLI together."""
 
-import sys
+import argparse
 from pathlib import Path
 
 from config.settings import load_config, load_voices
@@ -17,17 +17,28 @@ def main() -> None:
 
     Usage:
         python cli.py <text to speak>
+        python cli.py --voice 9s <text to speak>
     """
-    if len(sys.argv) < 2:
-        raise SystemExit("Usage: python cli.py <text>")
+    parser = argparse.ArgumentParser(description="FS-Iris TTS")
+    parser.add_argument("text", nargs="+", help="Text to synthesize")
+    parser.add_argument("--voice", default="", metavar="KEY",
+                        help="Voice key (e.g. '4s', '9s'). Uses first available if omitted.")
+    args = parser.parse_args()
 
-    text = " ".join(sys.argv[1:])
+    text = " ".join(args.text)
 
     config = load_config()
     voices = load_voices()
-    voice = voices.get(config.tts.default_voice) or next(iter(voices.values()), None)
-    if voice is None:
-        raise RuntimeError("No voice samples found in data/sounds/. Add .wav + .txt pairs.")
+
+    if args.voice:
+        if args.voice not in voices:
+            raise SystemExit(f"Unknown voice '{args.voice}'. Available: {list(voices)}")
+        voice = voices[args.voice]
+    else:
+        voice = voices.get(config.tts.default_voice) or next(iter(voices.values()), None)
+        if voice is None:
+            raise RuntimeError("No voice samples found in data/sounds/. Add .wav + .txt pairs.")
+
     engine = F5TTSEngine(config.tts, voice)
     service = TTSService(engine, sample_rate=config.tts.sample_rate)
     CLI(service, BASE_DIR / "output.wav").run(text)
