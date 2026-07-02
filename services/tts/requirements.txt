@@ -1,2 +1,4 @@
+fastapi
+uvicorn[standard]
 soundfile
 f5-tts-th

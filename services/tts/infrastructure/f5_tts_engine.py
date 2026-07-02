@@ -1,5 +1,7 @@
 """F5-TTS-TH implementation of the TTS Protocol."""
 
+import atexit
+import os
 import re
 
 import numpy as np
@@ -31,8 +33,9 @@ class F5TTSEngine:
         self._config = config
         self._default_voice = default_voice
         self._tts = _F5TTS(model=config.model)
-        # Cache preprocessed ref audio per voice name to avoid repeated disk I/O and trimming
         self._ref_cache: dict[str, tuple[str, str]] = {}
+        self._temp_files: list[str] = []
+        atexit.register(self._cleanup)
 
     def synthesize(self, text: str, voice: VoiceRef | None = None) -> np.ndarray:
         """
@@ -72,7 +75,15 @@ class F5TTSEngine:
         if voice.name not in self._ref_cache:
             ref_audio, ref_text = preprocess_ref_audio_text(str(voice.audio), voice.text)
             self._ref_cache[voice.name] = (ref_audio, ref_text)
+            self._temp_files.append(ref_audio)
         return self._ref_cache[voice.name]
+
+    def _cleanup(self) -> None:
+        for path in self._temp_files:
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
 
     def _infer(self, text: str, voice: VoiceRef) -> np.ndarray:
         ref_audio, ref_text = self._get_ref(voice)
