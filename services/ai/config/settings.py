@@ -74,7 +74,7 @@ class ChatConfig:
 
     max_tokens: int = 2048
     persona_path: Path = field(
-        default_factory=lambda: BASE_DIR / "data" / "personas" / "makise_kurisu.md"
+        default_factory=lambda: BASE_DIR / "data" / "personas" / "makise_kurisu_voice.md"
     )
     no_think: bool = True
 
@@ -112,7 +112,7 @@ def load_config() -> AppConfig:
     """
     return AppConfig(
         model=ModelConfig(
-            path=BASE_DIR / "models" / "qwen3-8b-q4_k_m.gguf",
+            path=BASE_DIR / "models" / "gemma-4-E2B-it-Q6_K.gguf",
         ),
         sampling=SamplingConfig(),
         chat=ChatConfig(),
