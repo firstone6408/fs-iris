@@ -34,6 +34,9 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "display_name")
+    private String displayName;
+
     @Column(name = "avatar_url")
     private String avatarUrl;
 
@@ -48,4 +51,7 @@ public class UserEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public UserEntity() {
+    }
 }
