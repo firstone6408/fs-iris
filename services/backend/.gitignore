@@ -35,5 +35,4 @@ build/
 ### Others ###
 /src/main/resources/database.properties
 /src/main/resources/jwt.properties
-/scripts
 /refs
